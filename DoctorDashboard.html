@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Doctor Dashboard</title>
+        <link rel="stylesheet" href="DoctorDashboard.css">
+    </head>
+    <body>
+        <div class="sidebar">
+            <h2>Doctor Dashboard</h2>
+            <button onclick="showsection('Dashboard')">Dashboard</button>
+            <button onclick="showsection('View Appointment')">View Appointment</button>
+            <button onclick="showsection('View Patients')">View Patients</button>
+            <button onclick="showsection('Reschedule Appointment')">Reschedule Appointment</button>
+            <button onclick="showsection('Send Medical Record')">Send Medical Records</button>
+            <button onclick="showsection('Update Patient Info')">Update Patient Info</button>
+        </div>
+        <div class="main"><center>Doctor Panel</center></div>
+        <section id="Dashboard">
+            <h3>Overview</h3>
+            <div class="summary">
+                <div class="card"><h2 id="countAppointment">1</h2><p>View Appointment</p></div>
+            </div>
+        </section>
+    </body>
+</html>
