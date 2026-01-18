@@ -1,26 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Doctor Dashboard</title>
-        <link rel="stylesheet" href="DoctorDashboard.css">
-    </head>
-    <body>
-        <div class="sidebar">
-            <h2>Doctor Dashboard</h2>
-            <button onclick="showsection('Dashboard')">Dashboard</button>
-            <button onclick="showsection('View Appointment')">View Appointment</button>
-            <button onclick="showsection('View Patients')">View Patients</button>
-            <button onclick="showsection('Reschedule Appointment')">Reschedule Appointment</button>
-            <button onclick="showsection('Send Medical Record')">Send Medical Records</button>
-            <button onclick="showsection('Update Patient Info')">Update Patient Info</button>
-        </div>
-        <div class="main"><center>Doctor Panel</center></div>
-        <section id="Dashboard">
-            <h3>Overview</h3>
-            <div class="summary">
-                <div class="card"><h2 id="countAppointment">1</h2><p>View Appointment</p></div>
-            </div>
-        </section>
-    </body>
+<head>
+<meta charset="UTF-8">
+<title>Doctor Dashboard</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    display: flex;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 280px;
+    background: #2c3e50;
+    color: white;
+    height: 100vh;
+    padding-top: 20px;
+    font-size: 20px;
+}
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.sidebar button {
+    width: 100%;
+    padding: 15px;
+    background: none;
+    border: none;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    font-size: 18px;
+}
+.sidebar button:hover { background: #34495e; }
+.sidebar button:active { background: #3f51b5; }
+
+/* MAIN */
+.main {
+    flex: 1;
+    padding: 20px;
+}
+
+section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    display: none;
+}
+
+h3 {
+    color: #3498db;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+th {
+    background: #ecf0f1;
+}
+
+/* INPUTS */
+input, select, button {
+    padding: 8px;
+    margin: 5px 0;
+    width: 100%;
+}
+
+.action-btn {
+    background: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.success {
+    color: green;
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>Doctor Dashboard</h2>
+    <button onclick="showSection('appointments')">View Appointments</button>
+    <button onclick="showSection('patients')">View Patients</button>
+    <button onclick="showSection('reschedule')">Reschedule Appointment</button>
+    <button onclick="showSection('records')">Send Medical Records</button>
+    <button onclick="showSection('update')">Update Patient Info</button>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+<!-- VIEW APPOINTMENTS -->
+<section id="appointments">
+    <h3>Appointments</h3>
+    <table>
+        <tr>
+            <th>Patient Name</th>
+            <th>Gender</th>
+            <th>Date</th>
+            <th>Time</th>
+        </tr>
+        <tr>
+            <td>John Doe</td>
+            <td>Male</td>
+            <td>2025-01-05</td>
+            <td>10:00 AM</td>
+        </tr>
+        <tr>
+            <td>Mary Jane</td>
+            <td>Female</td>
+            <td>2025-01-06</td>
+            <td>02:00 PM</td>
+        </tr>
+    </table>
+</section>
+
+<!-- VIEW PATIENTS -->
+<section id="patients">
+    <h3>Patients Under This Doctor</h3>
+    <p>Total Patients: <b id="patientCount">2</b></p>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>Age</th>
+        </tr>
+        <tr>
+            <td>John Doe</td>
+            <td>Male</td>
+            <td>30</td>
+        </tr>
+        <tr>
+            <td>Mary Jane</td>
+            <td>Female</td>
+            <td>25</td>
+        </tr>
+    </table>
+</section>
+
+<!-- RESCHEDULE -->
+<section id="reschedule">
+    <h3>Reschedule Appointment</h3>
+
+    <select id="appointmentPatient">
+        <option>John Doe</option>
+        <option>Mary Jane</option>
+    </select>
+
+    <input type="date" id="newDate">
+    <input type="time" id="newTime">
+
+    <button class="action-btn" onclick="reschedule()">Reschedule</button>
+    <p class="success" id="rescheduleMsg"></p>
+</section>
+
+<!-- SEND MEDICAL RECORD -->
+<section id="records">
+    <h3>Send Medical Record</h3>
+
+    <select id="recordPatient">
+        <option>John Doe</option>
+        <option>Mary Jane</option>
+    </select>
+
+    <input placeholder="Medical Record / Diagnosis">
+
+    <button class="action-btn" onclick="sendRecord()">Send</button>
+    <p class="success" id="recordMsg"></p>
+</section>
+
+<!-- UPDATE PATIENT INFO -->
+<section id="update">
+    <h3>Update Patient Information</h3>
+
+    <select id="updatePatient">
+        <option>John Doe</option>
+        <option>Mary Jane</option>
+    </select>
+
+    <input type="number" placeholder="Age">
+    <input placeholder="Medical History">
+
+    <button class="action-btn" onclick="updateInfo()">Update</button>
+    <p class="success" id="updateMsg"></p>
+</section>
+
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+function showSection(id) {
+    document.querySelectorAll("section").forEach(s => s.style.display = "none");
+    document.getElementById(id).style.display = "block";
+}
+
+// default view
+showSection("appointments");
+
+// Reschedule appointment
+function reschedule() {
+    document.getElementById("rescheduleMsg").textContent =
+        "Appointment rescheduled successfully!";
+}
+
+// Send medical record
+function sendRecord() {
+    document.getElementById("recordMsg").textContent =
+        "Medical record sent successfully!";
+}
+
+// Update patient info
+function updateInfo() {
+    document.getElementById("updateMsg").textContent =
+        "Patient information updated successfully!";
+}
+</script>
+
+</body>
 </html>
