@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receptionist Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #e0e6ef;
+            padding-bottom: 15px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        .welcome-section {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: #3498db;
+            font-size: 22px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .section-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .section {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            color: #2c3e50;
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        .task-list {
+            list-style-type: none;
+        }
+        
+        .task-item {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .task-item:hover {
+            background-color: #edf5ff;
+            transform: translateX(5px);
+        }
+        
+        .task-item i {
+            margin-right: 12px;
+            color: #7f8c8d;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .highlight {
+            background-color: #fff9e6;
+            border-left-color: #f39c12;
+        }
+        
+        .note {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-top: 15px;
+            padding: 8px 12px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #95a5a6;
+        }
+        
+        .logout-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+        }
+        
+        .logout-btn i {
+            margin-right: 8px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e6ef;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .section-container {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            h1 {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>RECEPTIONIST DASHBOARD</h1>
+            <div class="user-info">
+                <span>Logged in as: <strong>Receptionist</strong></span>
+            </div>
+        </header>
+        
+        <div class="welcome-section">
+            <h2>Welcome</h2>
+            <p>Manage patient records, appointments, and doctor assignments from this dashboard.</p>
+        </div>
+        
+        <div class="section-container">
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-user-injured"></i>
+                    <span>Resistant Patient</span>
+                </div>
+                <ul class="task-list">
+                    <li class="task-item">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Add patient details</span>
+                    </li>
+                    <li class="task-item">
+                        <i class="fas fa-id-card"></i>
+                        <span>Assign patient ID</span>
+                    </li>
+                    <li class="task-item highlight">
+                        <i class="fas fa-save"></i>
+                        <span>Save patient profile</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>APPOINTMENTS</span>
+                </div>
+                <ul class="task-list">
+                    <li class="task-item">
+                        <i class="fas fa-eye"></i>
+                        <span>View today's appointments</span>
+                    </li>
+                    <li class="task-item">
+                        <i class="fas fa-info-circle"></i>
+                        <span>View appointment details</span>
+                    </li>
+                </ul>
+                <div class="note">
+                    <i class="fas fa-lock"></i> Read-only access
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-link"></i>
+                    <span>CONNECT PATIENT</span>
+                </div>
+                <ul class="task-list">
+                    <li class="task-item">
+                        <i class="fas fa-search"></i>
+                        <span>Search patient by name</span>
+                    </li>
+                    <li class="task-item">
+                        <i class="fas fa-user-md"></i>
+                        <span>Select available doctor</span>
+                    </li>
+                    <li class="task-item">
+                        <i class="fas fa-handshake"></i>
+                        <span>Assign patient to doctor</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <button class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                LOG OUT
+            </button>
+        </div>
+        
+        <div class="footer">
+            <p>Receptionist Dashboard v1.0 | Medical Management System</p>
+        </div>
+    </div>
+
+    <script>
+        // Add interactivity to task items
+        document.querySelectorAll('.task-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remove active class from all items
+                document.querySelectorAll('.task-item').forEach(i => {
+                    i.style.backgroundColor = '#f8fafc';
+                });
+                
+                // Add active effect to clicked item
+                this.style.backgroundColor = '#e3f2fd';
+                
+                // Show a simple alert (in a real app, this would trigger specific functionality)
+                const taskText = this.querySelector('span').textContent;
+                console.log(`Task clicked: ${taskText}`);
+            });
+        });
+        
+        // Logout button functionality
+        document.querySelector('.logout-btn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to log out?')) {
+                alert('Logging out...');
+                // In a real application, this would redirect to logout page
+                // window.location.href = '/logout';
+            }
+        });
+    </script>
+</body>
+</html>
