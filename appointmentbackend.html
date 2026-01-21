@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="en" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Appointment Booking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/_sdk/element_sdk.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Outfit:wght@600;700;800&amp;display=swap" rel="stylesheet">
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .title-font {
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #065f46 0%, #059669 50%, #10b981 100%);
+        }
+        
+        .card-shadow {
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.25);
+        }
+        
+        .input-focus:focus {
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-slide-in {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+        
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        .loading-pulse {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+            border: 2px solid #fbbf24;
+        }
+        
+        .status-confirmed {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #10b981;
+        }
+        
+        .status-cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            animation: slideIn 0.3s ease-out;
+        }
+    </style>
+    <style>
+        @view-transition {
+            navigation: auto;
+        }
+    </style>
+    <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+</head>
+
+<body class="h-full">
+    <div id="app-wrapper" class="min-h-full w-full gradient-bg overflow-auto">
+        <!-- Header -->
+        <header class="w-full py-6 px-4 sm:px-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-lg">
+                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+                        </div>
+                        <div>
+                            <h1 id="hospital-name" class="text-white text-2xl sm:text-3xl font-bold title-font">MediHealth Care</h1>
+                            <p id="tagline" class="text-green-200 text-sm">Excellence in Medical Care</p>
+                        </div>
+                    </div>
+                    <nav class="hidden sm:flex gap-3"><button onclick="showSection('booking')" class="nav-btn px-5 py-2.5 rounded-xl text-white font-medium hover:bg-white/20 transition-all" data-section="booking">Book</button> <button onclick="showSection('appointments')" class="nav-btn px-5 py-2.5 rounded-xl text-white font-medium hover:bg-white/20 transition-all"
+                            data-section="appointments">Appointments</button>
+                    </nav><button onclick="toggleMobileMenu()" class="sm:hidden text-white p-2">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+       </svg></button>
+                </div>
+                <!-- Mobile Menu -->
+                <div id="mobile-menu" class="hidden sm:hidden mt-4">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-2 flex flex-col gap-1"><button onclick="showSection('booking'); toggleMobileMenu()" class="px-4 py-3 text-left text-white rounded-lg hover:bg-white/10">Book Appointment</button> <button onclick="showSection('appointments'); toggleMobileMenu()" class="px-4 py-3 text-left text-white rounded-lg hover:bg-white/10">My Appointments</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Main Content -->
+        <main class="w-full px-4 sm:px-8 pb-12">
+            <div class="max-w-7xl mx-auto">
+                <!-- Booking Section -->
+                <section id="booking-section" class="animate-slide-in">
+                    <div class="bg-white rounded-3xl card-shadow p-6 sm:p-10">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+         </svg>
+                            </div>
+                            <h2 class="text-3xl font-bold text-gray-800 title-font">Book Appointment</h2>
+                        </div>
+                        <form id="booking-form" class="space-y-8">
+                            <!-- Patient Information -->
+                            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-5 flex items-center gap-2 title-font">
+                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg> Patient Information</h3>
+                                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                                    <div><label for="patient-name" class="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label> <input type="text" id="patient-name" required class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 input-focus focus:border-green-500 outline-none transition-all bg-white"
+                                            placeholder="John Doe">
+                                    </div>
+                                    <div><label for="patient-email" class="block text-sm font-semibold text-gray-700 mb-2">Email Address *</label> <input type="email" id="patient-email" required class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 input-focus focus:border-green-500 outline-none transition-all bg-white"
+                                            placeholder="john@example.com">
+                                    </div>
+                                    <div><label for="patient-phone" class="block text-sm font-semibold text-gray-700 mb-2">Phone Number *</label> <input type="tel" id="patient-phone" required class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 input-focus focus:border-green-500 outline-none transition-all bg-white"
+                                            placeholder="+1 234 567 8900">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Appointment Details -->
+                            <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-5 flex items-center gap-2 title-font">
+                                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg> Appointment Details</h3>
+                                <div class="grid sm:grid-cols-2 gap-5">
+                                    <div><label for="department" class="block text-sm font-semibold text-gray-700 mb-2">Department *</label> <select id="department" required onchange="updateDoctors()" class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 input-focus focus:border-green-500 outline-none transition-all bg-white"> <option value="">Select Department</option> <option value="General Medicine">General Medicine</option> <option value="Cardiology">Cardiology</option> <option value="Orthopedics">Orthopedics</option> <option value="Pediatrics">Pediatrics</option> <option value="Dermatology">Dermatology</option> <option value="Neurology">Neurology</option> <option value="Gynecology">Gynecology</option> <option value="ENT">ENT (Ear, Nose, Throat)</option> <option value="Psychiatry">Psychiatry</option> </select>
+                                    </div>
+                                    <div><label for="doctor" class="block text-sm font-semibold text-gray-700 mb-2">Select Doctor *</label> <select id="doctor" required class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 input-focus focus:border-green-500 outline-none transition-all bg-white"> <option value="">Select Department First</option> </select>
+                                    </div>
+                                    <div><label for="appointment-date" class="block text-sm font-semibold text-gray-700 mb-2">Preferred Date *</label> <input type="date" id="appointment-date" required class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 input-focus focus:border-green-500 outline-none transition-all bg-white">
+                                    </div>
+                                    <div><label for="appointment-time" class="block text-sm font-semibold text-gray-700 mb-2">Preferred Time *</label> <select id="appointment-time" required class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 input-focus focus:border-green-500 outline-none transition-all bg-white"> <option value="">Select Time Slot</option> <option value="09:00 AM">09:00 AM</option> <option value="09:30 AM">09:30 AM</option> <option value="10:00 AM">10:00 AM</option> <option value="10:30 AM">10:30 AM</option> <option value="11:00 AM">11:00 AM</option> <option value="11:30 AM">11:30 AM</option> <option value="12:00 PM">12:00 PM</option> <option value="02:00 PM">02:00 PM</option> <option value="02:30 PM">02:30 PM</option> <option value="03:00 PM">03:00 PM</option> <option value="03:30 PM">03:30 PM</option> <option value="04:00 PM">04:00 PM</option> <option value="04:30 PM">04:30 PM</option> <option value="05:00 PM">05:00 PM</option> </select>
+                                    </div>
+                                </div>
+                                <div class="mt-5"><label for="description" class="block text-sm font-semibold text-gray-700 mb-2">Reason for Visit / Symptoms</label> <textarea id="description" rows="4" class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 input-focus focus:border-green-500 outline-none transition-all resize-none bg-white"
+                                        placeholder="Describe your symptoms or reason for appointment..."></textarea>
+                                </div>
+                            </div>
+                            <!-- Submit Button -->
+                            <div class="flex justify-end"><button type="submit" id="submit-btn" class="px-10 py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg flex items-center gap-3 title-font text-lg">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg><span id="submit-text">Book Appointment</span> </button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+                <!-- Appointments Section -->
+                <section id="appointments-section" class="hidden animate-slide-in">
+                    <div class="bg-white rounded-3xl card-shadow p-6 sm:p-10">
+                        <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+                                </div>
+                                <h2 class="text-3xl font-bold text-gray-800 title-font">My Appointments</h2>
+                            </div><span id="appointment-count" class="px-5 py-2 bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 rounded-full text-sm font-bold">0 appointments</span>
+                        </div>
+                        <div id="appointments-list" class="space-y-5">
+                            <!-- Appointments will be rendered here -->
+                        </div>
+                        <div id="no-appointments" class="text-center py-16">
+                            <div class="w-24 h-24 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+         </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-700 mb-3 title-font">No Appointments Booked</h3>
+                            <p class="text-gray-500 mb-6">Start your healthcare journey by booking your first appointment</p><button onclick="showSection('booking')" class="px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg"> Book Now </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+        <!-- Footer -->
+        <footer class="w-full py-6 px-4 sm:px-8 border-t border-white/20">
+            <div class="max-w-7xl mx-auto text-center">
+                <p id="footer-text" class="text-green-100 text-sm">© 2024 MediHealth Care. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full card-shadow">
+            <div class="text-center">
+                <div class="w-20 h-20 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center mx-auto mb-5">
+                    <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+      </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-3 title-font">Cancel Appointment?</h3>
+                <p class="text-gray-600 mb-8">Are you sure you want to cancel this appointment? This action cannot be undone.</p>
+                <div class="flex gap-4"><button onclick="closeDeleteModal()" class="flex-1 px-6 py-3.5 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-all">Keep It</button> <button onclick="confirmDelete()" id="confirm-delete-btn"
+                        class="flex-1 px-6 py-3.5 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-xl hover:from-red-600 hover:to-red-700 transition-all">Cancel Appointment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // ========== BACKEND SIMULATION ==========
+
+        // In-memory database
+        class AppointmentDatabase {
+            constructor() {
+                this.appointments = this.loadFromStorage();
+                this.nextId = this.getNextId();
+            }
+
+            loadFromStorage() {
+                const stored = localStorage.getItem('hospital_appointments');
+                return stored ? JSON.parse(stored) : [];
+            }
+
+            saveToStorage() {
+                localStorage.setItem('hospital_appointments', JSON.stringify(this.appointments));
+            }
+
+            getNextId() {
+                return this.appointments.length > 0 ?
+                    Math.max(...this.appointments.map(a => a.id)) + 1 :
+                    1;
+            }
+
+            // CREATE
+            create(appointmentData) {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        // Simulate validation
+                        if (!appointmentData.patient_name || !appointmentData.doctor) {
+                            resolve({
+                                success: false,
+                                error: 'Missing required fields'
+                            });
+                            return;
+                        }
+
+                        // Check for conflicting appointments
+                        const conflict = this.appointments.find(apt =>
+                            apt.doctor === appointmentData.doctor &&
+                            apt.appointment_date === appointmentData.appointment_date &&
+                            apt.appointment_time === appointmentData.appointment_time &&
+                            apt.status !== 'Cancelled'
+                        );
+
+                        if (conflict) {
+                            resolve({
+                                success: false,
+                                error: 'This time slot is already booked with this doctor'
+                            });
+                            return;
+                        }
+
+                        const newAppointment = {
+                            id: this.nextId++,
+                            ...appointmentData,
+                            status: 'Pending',
+                            created_at: new Date().toISOString(),
+                            booking_reference: `APT${Date.now().toString().slice(-8)}`
+                        };
+
+                        this.appointments.push(newAppointment);
+                        this.saveToStorage();
+
+                        resolve({
+                            success: true,
+                            data: newAppointment
+                        });
+                    }, 800); // Simulate network delay
+                });
+            }
+
+            // READ
+            getAll() {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve({
+                            success: true,
+                            data: [...this.appointments]
+                        });
+                    }, 400);
+                });
+            }
+
+            getById(id) {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        const appointment = this.appointments.find(apt => apt.id === id);
+                        if (appointment) {
+                            resolve({
+                                success: true,
+                                data: appointment
+                            });
+                        } else {
+                            resolve({
+                                success: false,
+                                error: 'Appointment not found'
+                            });
+                        }
+                    }, 300);
+                });
+            }
+
+            // UPDATE
+            update(id, updates) {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        const index = this.appointments.findIndex(apt => apt.id === id);
+                        if (index === -1) {
+                            resolve({
+                                success: false,
+                                error: 'Appointment not found'
+                            });
+                            return;
+                        }
+
+                        this.appointments[index] = {
+                            ...this.appointments[index],
+                            ...updates,
+                            updated_at: new Date().toISOString()
+                        };
+
+                        this.saveToStorage();
+                        resolve({
+                            success: true,
+                            data: this.appointments[index]
+                        });
+                    }, 600);
+                });
+            }
+
+            // DELETE
+            delete(id) {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        const index = this.appointments.findIndex(apt => apt.id === id);
+                        if (index === -1) {
+                            resolve({
+                                success: false,
+                                error: 'Appointment not found'
+                            });
+                            return;
+                        }
+
+                        this.appointments.splice(index, 1);
+                        this.saveToStorage();
+                        resolve({
+                            success: true
+                        });
+                    }, 500);
+                });
+            }
+        }
+
+        // Initialize backend
+        const backend = new AppointmentDatabase();
+
+        // ========== FRONTEND ==========
+
+        // Doctor data by department
+        const doctorsByDepartment = {
+            'General Medicine': ['Dr. Sarah Johnson', 'Dr. Michael Chen', 'Dr. Emily Brown'],
+            'Cardiology': ['Dr. Robert Williams', 'Dr. Lisa Anderson', 'Dr. James Taylor'],
+            'Orthopedics': ['Dr. David Martinez', 'Dr. Jennifer Garcia', 'Dr. Christopher Lee'],
+            'Pediatrics': ['Dr. Amanda Wilson', 'Dr. Kevin Thomas', 'Dr. Michelle Davis'],
+            'Dermatology': ['Dr. Rachel Moore', 'Dr. Steven Clark', 'Dr. Laura White'],
+            'Neurology': ['Dr. Daniel Harris', 'Dr. Jessica Lewis', 'Dr. Matthew Walker'],
+            'Gynecology': ['Dr. Elizabeth Hall', 'Dr. Patricia Young', 'Dr. Sandra King'],
+            'ENT': ['Dr. Andrew Scott', 'Dr. Nicole Green', 'Dr. Brian Adams'],
+            'Psychiatry': ['Dr. Karen Rodriguez', 'Dr. Mark Thompson', 'Dr. Susan Martinez']
+        };
+
+        // State
+        let appointments = [];
+        let deleteTargetId = null;
+
+        // Default config
+        const defaultConfig = {
+            hospital_name: 'MediHealth Care',
+            tagline: 'Excellence in Medical Care',
+            footer_text: '© 2025 MediHealth Care. All rights reserved.'
+        };
+
+        // Update doctors dropdown
+        function updateDoctors() {
+            const department = document.getElementById('department').value;
+            const doctorSelect = document.getElementById('doctor');
+            doctorSelect.innerHTML = '<option value="">Select Doctor</option>';
+
+            if (department && doctorsByDepartment[department]) {
+                doctorsByDepartment[department].forEach(doctor => {
+                    const option = document.createElement('option');
+                    option.value = doctor;
+                    option.textContent = doctor;
+                    doctorSelect.appendChild(option);
+                });
+            }
+        }
+
+        // Set minimum date to today
+        function setMinDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('appointment-date').min = today;
+        }
+
+        // Show section
+        function showSection(section) {
+            document.getElementById('booking-section').classList.toggle('hidden', section !== 'booking');
+            document.getElementById('appointments-section').classList.toggle('hidden', section !== 'appointments');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.toggle('bg-white/20', btn.dataset.section === section);
+            });
+
+            if (section === 'appointments') {
+                loadAppointments();
+            }
+        }
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const bgColors = {
+                success: 'from-green-500 to-emerald-600',
+                error: 'from-red-500 to-red-600',
+                info: 'from-green-500 to-emerald-600'
+            };
+
+            const toast = document.createElement('div');
+            toast.className = `toast bg-gradient-to-r ${bgColors[type]} text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3`;
+            toast.innerHTML = `
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+        <span class="font-medium">${message}</span>
+      `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        // Load appointments from backend
+        async function loadAppointments() {
+            const result = await backend.getAll();
+            if (result.success) {
+                appointments = result.data;
+                renderAppointments();
+            }
+        }
+
+        // Render appointments
+        function renderAppointments() {
+            const container = document.getElementById('appointments-list');
+            const noAppointments = document.getElementById('no-appointments');
+            const countEl = document.getElementById('appointment-count');
+
+            countEl.textContent = `${appointments.length} appointment${appointments.length !== 1 ? 's' : ''}`;
+
+            if (appointments.length === 0) {
+                container.innerHTML = '';
+                noAppointments.classList.remove('hidden');
+                return;
+            }
+
+            noAppointments.classList.add('hidden');
+
+            // Sort by date (newest first)
+            const sorted = [...appointments].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+            container.innerHTML = sorted.map(apt => `
+        <div class="border-2 border-gray-200 rounded-2xl p-6 hover:border-green-300 transition-all hover:shadow-lg" data-id="${apt.id}">
+          <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-3 flex-wrap">
+                <span class="px-4 py-1.5 rounded-full text-sm font-bold status-${apt.status.toLowerCase()}">${apt.status}</span>
+                <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">${apt.booking_reference}</span>
+                <span class="text-sm text-gray-500 font-medium">${apt.department}</span>
+              </div>
+              <h3 class="text-xl font-bold text-gray-800 mb-3 title-font">${apt.doctor}</h3>
+              <div class="space-y-2">
+                <p class="text-sm text-gray-700 flex items-center gap-2">
+                  <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                  </svg>
+                  <span class="font-semibold">${formatDate(apt.appointment_date)}</span> at <span class="font-semibold">${apt.appointment_time}</span>
+                </p>
+                <p class="text-sm text-gray-700 flex items-center gap-2">
+                  <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                  </svg>
+                  ${apt.patient_name}
+                </p>
+                <p class="text-sm text-gray-700 flex items-center gap-2">
+                  <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                  </svg>
+                  ${apt.patient_email}
+                </p>
+              </div>
+              ${apt.description ? `<p class="mt-4 text-sm text-gray-600 bg-gray-50 rounded-xl p-4 border-l-4 border-green-500"><strong>Reason:</strong> ${apt.description}</p>` : ''}
+            </div>
+            <div class="flex lg:flex-col gap-3">
+              ${apt.status === 'Pending' ? `
+                <button onclick="updateStatus(${apt.id}, 'Confirmed')" class="px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all font-semibold text-sm shadow-md">
+                  ✓ Confirm
+                </button>
+              ` : ''}
+              ${apt.status !== 'Cancelled' ? `
+                <button onclick="openDeleteModal(${apt.id})" class="px-5 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all font-semibold text-sm shadow-md">
+                  ✕ Cancel
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Format date
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    }
+
+    // Update appointment status
+    async function updateStatus(id, status) {
+      const result = await backend.update(id, { status });
+      
+      if (result.success) {
+        showToast(`Appointment ${status.toLowerCase()} successfully!`, 'success');
+        loadAppointments();
+      } else {
+        showToast(result.error || 'Failed to update appointment', 'error');
+      }
+    }
+
+    // Delete modal functions
+    function openDeleteModal(id) {
+      deleteTargetId = id;
+      document.getElementById('delete-modal').classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+      deleteTargetId = null;
+      document.getElementById('delete-modal').classList.add('hidden');
+    }
+
+    async function confirmDelete() {
+      if (!deleteTargetId) return;
+      
+      const btn = document.getElementById('confirm-delete-btn');
+      const originalText = btn.textContent;
+      btn.textContent = 'Cancelling...';
+      btn.disabled = true;
+      btn.classList.add('loading-pulse');
+      
+      const result = await backend.delete(deleteTargetId);
+      
+      btn.textContent = originalText;
+      btn.disabled = false;
+      btn.classList.remove('loading-pulse');
+      
+      if (result.success) {
+        showToast('Appointment cancelled successfully', 'info');
+        closeDeleteModal();
+        loadAppointments();
+      } else {
+        showToast(result.error || 'Failed to cancel appointment', 'error');
+      }
+    }
+
+    // Form submission
+    async function handleSubmit(e) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submit-btn');
+      const submitText = document.getElementById('submit-text');
+      const originalText = submitText.textContent;
+      
+      submitBtn.disabled = true;
+      submitText.textContent = 'Processing...';
+      submitBtn.classList.add('loading-pulse');
+      
+      const appointmentData = {
+        patient_name: document.getElementById('patient-name').value,
+        patient_email: document.getElementById('patient-email').value,
+        patient_phone: document.getElementById('patient-phone').value,
+        doctor: document.getElementById('doctor').value,
+        department: document.getElementById('department').value,
+        appointment_date: document.getElementById('appointment-date').value,
+        appointment_time: document.getElementById('appointment-time').value,
+        description: document.getElementById('description').value
+      };
+      
+      const result = await backend.create(appointmentData);
+      
+      submitBtn.disabled = false;
+      submitText.textContent = originalText;
+      submitBtn.classList.remove('loading-pulse');
+      
+      if (result.success) {
+        showToast(`Appointment booked! Reference: ${result.data.booking_reference}`, 'success');
+        document.getElementById('booking-form').reset();
+        document.getElementById('doctor').innerHTML = '<option value="">Select Department First</option>';
+      } else {
+        showToast(result.error || 'Failed to book appointment', 'error');
+      }
+    }
+
+    // Config change handler for Element SDK
+    async function onConfigChange(config) {
+      document.getElementById('hospital-name').textContent = config.hospital_name || defaultConfig.hospital_name;
+      document.getElementById('tagline').textContent = config.tagline || defaultConfig.tagline;
+      document.getElementById('footer-text').textContent = config.footer_text || defaultConfig.footer_text;
+    }
+
+    // Map to capabilities
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      };
+    }
+
+    // Map to edit panel values
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ['hospital_name', config.hospital_name || defaultConfig.hospital_name],
+        ['tagline', config.tagline || defaultConfig.tagline],
+        ['footer_text', config.footer_text || defaultConfig.footer_text]
+      ]);
+    }
+
+    // Initialize
+    function init() {
+      setMinDate();
+      loadAppointments();
+      
+      document.getElementById('booking-form').addEventListener('submit', handleSubmit);
+      
+      // Initialize Element SDK
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities,
+          mapToEditPanelValues
+        });
+      }
+    }
+
+    init();
+    </script>
+    <script>
+        (function() {
+            function c() {
+                var b = a.contentDocument || a.contentWindow.document;
+                if (b) {
+                    var d = b.createElement('script');
+                    d.innerHTML = "window.__CF$cv$params={r:'9bc072708072ef2f',t:'MTc2ODA5MjkxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+                    b.getElementsByTagName('head')[0].appendChild(d)
+                }
+            }
+            if (document.body) {
+                var a = document.createElement('iframe');
+                a.height = 1;
+                a.width = 1;
+                a.style.position = 'absolute';
+                a.style.top = 0;
+                a.style.left = 0;
+                a.style.border = 'none';
+                a.style.visibility = 'hidden';
+                document.body.appendChild(a);
+                if ('loading' !== document.readyState) c();
+                else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c);
+                else {
+                    var e = document.onreadystatechange || function() {};
+                    document.onreadystatechange = function(b) {
+                        e(b);
+                        'loading' !== document.readyState && (document.onreadystatechange = e, c())
+                    }
+                }
+            }
+        })();
+    </script>
+</body>
+
+</html>
