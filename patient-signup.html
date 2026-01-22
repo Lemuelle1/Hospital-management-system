@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HMS patient signup page</title>
+    <link rel="stylesheet" href="patient-signup.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet">
+  </head>
+  <body>
+    <div class="wrapper">
+      <form action="">
+        <h1>Patient Sign In</h1>
+       <form id="loginForm" method="POST" action="/login"></form>
+        <div class="input-box">
+          <label for="username"><i class="bx bxs-user"></i>Username</label>
+          <input type="text" id="Username" name="username" placeholder="Username" required>
+          
+        </div>
+         <div class="input-box">
+          <label for="Password"><i class='bx  bx-envelope'></i> Email</label>
+          <input type="email" id="email" name="password" placeholder="Enter Email" required>  
+        </div>
+        <div class="input-box">
+  <label for="phone"><i class="bx bx-phone"></i> Phone Number</label>
+  <div style="display:flex; align-items:center;">
+    <span style="padding:10px; background:#eee; border:1px solid #ccc; border-radius:4px 0 0 4px;">+237</span>
+    <input type="tel" id="phone" name="phone"
+           placeholder="612345678"
+           pattern="^[0-9]{8,12}$"
+           required
+           style="flex:1; border-radius:0 4px 4px 0;">
+  </div>
+  <small>Enter your number without country code</small>
+</div>
+        <div class="input-box password-wrapper">
+        <label for="password"><i class="bx bx-lock"></i> Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter password" required >
+        <i class="bx bx-hide" id="togglePassword"></i>
+        </div>
+         <div class="input-box">
+          <label for="Password"><i class="bx bxs-lock-alt"></i> Confirm Password</label>
+          <input type="password" id="confirm-Password" placeholder="confirm-Password" required >
+
+        </div>
+        <button type="submit" class="btn">Sign in</button>
+        <button type="button" class="btn-back" onclick="history.back()">Go Back</button>
+        <button type="button" class="btn-cancel" onclick="clearForm()">Cancel</button>
+      </form>
+    </div>
+    <script>
+   // Select the form
+const signupForm = document.querySelector("form");
+
+signupForm.addEventListener("submit", async (e) => {
+    e.preventDefault(); // Stop page from refreshing
+
+    // Collect data from your specific ID names
+    const formData = {
+        username: document.getElementById("Username").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        password: document.getElementById("password").value
+    };
+
+    // Send data to the backend
+    const response = await fetch('http://localhost:5000/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+        alert("Registration Successful! Please Login.");
+        window.location.href = 'patient-login.html';
+    } else {
+        alert("Error: " + data.message);
+    }
+});
+
+  </script>
+  </body>
+</html>
