@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HMS login page</title>
+    <link rel="stylesheet" href="patient-login.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet">
+  </head>
+  <body>
+    <div class="wrapper">
+      <form action="">
+        <h1>Patient Login</h1>
+        <form id="loginForm" method="POST" action="/login" onsubmit="return goToDashboard()">
+        <div class="input-box">
+          <label for="username"><i class="bx bxs-user"></i>Username</label>
+          <input type="text" id="Username" name="username" placeholder="Username" required>
+          
+        </div>
+        <div class="input-box password-wrapper">
+        <label for="password"><i class="bx bx-lock"></i> Password</label>
+        <input type="password" id="password" name="password" placeholder="password" required>
+        <i class="bx bx-hide" id="togglePassword"></i>
+      </div>
+        <div class="input-box">
+          <label for="Password"><i class='bx  bx-envelope'></i> Email</label>
+          <input type="email" id="email" name="email" placeholder="Enter Email" required>  
+        </div>
+        <div class="remember-forgot">
+          <label><input type="checkbox">Remember me</label>
+          <a href="#">Forgot Password</a>
+        </div>
+        <button type="submit" class="btn" >Login</button>
+        <p id="errorMessage" class="error-message"></p>
+        <p>Don't have an account yet? <a href="#" onclick="location.href='patient-signup.html'">Sign up</a></p>
+        <button type="button" class="btn-back" onclick="history.back()">Go Back</button>
+        <button type="button" class="btn-cancel" onclick="clearForm()">Cancel</button>
+      </form>
+    </div>
+     <script>
+      function goToDashboard() {
+        const loginForm = document.getElementById("loginForm");
+
+loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    try {
+        const response = await fetch('http://localhost:5000/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // SAVE THE TOKEN: This is the most important part for Member 3
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('userRole', data.role);
+
+            alert("Login Successful!");
+            
+            // Redirect based on role
+            if(data.role === 'patient') {
+                window.location.href = 'patient-dashboard.html';
+            } else {
+                window.location.href = 'staff-dashboard.html';
+            }
+        } else {
+            alert(data.message);
+        }
+    } catch (err) {
+        console.error("Login error:", err);
+    }
+});
+
+    }
+
+      // Toggle password visibility
+    const togglePassword = document.querySelector("#togglePassword");
+    const password = document.querySelector("#password");
+
+    togglePassword.addEventListener("click", () => {
+      const type = password.getAttribute("type") === "password" ? "text" : "password";
+      password.setAttribute("type", type);
+      togglePassword.classList.toggle("bx-show");
+    });
+
+     function clearForm() {
+      document.getElementById("loginForm").reset();
+      document.getElementById("errorMessage").style.display = "none"; // hide error if shown
+    }
+
+    // Basic front-end validation
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      const email = document.getElementById("email").value;
+      const passwordVal = document.getElementById("password").value;
+
+      if (!email.includes("@")) {
+        e.preventDefault();
+        document.getElementById("errorMessage").textContent = "Please enter a valid email.";
+        document.getElementById("errorMessage").style.display = "block";
+      } else if (passwordVal.length < 6) {
+        e.preventDefault();
+        document.getElementById("errorMessage").textContent = "Password must be at least 6 characters.";
+        document.getElementById("errorMessage").style.display = "block";
+      }
+    });
+  </script>
+  </body>
+</html>
