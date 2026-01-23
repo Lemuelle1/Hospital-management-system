@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    display: flex;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 280px;
+    background:  #2a5c9e;
+    color: white;
+    height: 100vh;
+    padding-top: 20px;
+    font-size: 20px;
+}
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.sidebar button {
+    width: 100%;
+    padding: 15px;
+    background: none;
+    border: none;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    font-size: 20px;
+}
+.sidebar button:hover { background: #34495e; }
+.sidebar button:active { background:  #34495e; }
+.logout-btn {
+   background-color: #f8fbff;
+    color: #2a5c9e;
+    border: 2px solid #2a5c9e;
+    font-weight: bold;
+    text-align: center;
+}
+.logout-btn:hover {
+    background:  #2a5c9e;
+    color: #f8fbff;
+    border: 2px solid #f8fbff;
+}
+
+/* MAIN CONTENT */
+.main { flex: 1; padding: 20px; }
+section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    display: none;
+}
+h3 { color: #3498db; }
+
+/* Dashboard summary */
+.summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+.card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    text-align: center;
+}
+.card h2 { margin: 0; font-size: 40px; color: #3498db; }
+.card p { margin: 5px 0 0; font-size: 18px; }
+
+/* Forms & Tables */
+input, button {
+    padding: 8px;
+    margin: 5px 0;
+    width: 100%;
+}
+.add-btn {
+    background: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+.delete-btn {
+    background: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+th { background: #ecf0f1; }
+
+/* Search box */
+.search-box { margin: 10px 0; }
+.search-box input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>Admin Dashboard</h2>
+    <button onclick="showSection('dashboard')">Dashboard</button>
+    <button onclick="showSection('doctors')">Doctors</button>
+    <button onclick="showSection('nurses')">Nurses</button>
+    <button onclick="showSection('receptionists')">Receptionists</button>
+    <button onclick="showSection('patients')">Patients</button>
+    <hr style="margin:20px 0; border:1px solid #fff; opacity:0.3;">
+    <button class="logout-btn" onclick="location.href='logoutpage.html'"> Logout</button>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+<!-- DASHBOARD SUMMARY -->
+<section id="dashboard">
+    <h3>Overview</h3>
+    <div class="summary">
+        <div class="card"><h2 id="countDoctors">1</h2><p>Doctors</p></div>
+        <div class="card"><h2 id="countNurses">1</h2><p>Nurses</p></div>
+        <div class="card"><h2 id="countReceptionists">1</h2><p>Receptionists</p></div>
+        <div class="card"><h2 id="countPatients">1</h2><p>Patients</p></div>
+    </div>
+</section>
+
+<!-- DOCTORS -->
+<section id="doctors">
+    <h3>Doctors Management</h3>
+    <p>Total Doctors: <span id="doctorCount">1</span></p>
+    <div class="search-box">
+        <input type="text" id="searchDoctors" placeholder="Search Doctors..."
+               onkeyup="searchTable('doctorsTable','searchDoctors')">
+    </div>
+    <input id="docID" placeholder="Doctor ID">
+    <input id="docName" placeholder="Doctor Name">
+    <input id="docEmail" placeholder="Email">
+    <input id="docFunction" placeholder="Function (e.g. Cardiologist)">
+    <button class="add-btn"
+        onclick="addStaff('doctorsTable','doctorCount','docID','docName','docEmail','docFunction','D')">
+        Add Doctor
+    </button>
+    <table id="doctorsTable">
+        <tr><th>ID</th><th>Name</th><th>Email</th><th>Function</th><th>Action</th></tr>
+        <tr>
+            <td>D-001</td><td>Dr. Alice Smith</td><td>alice@hospital.com</td><td>Cardiologist</td>
+            <td><button class="delete-btn" onclick="deleteRow(this,'doctorCount')">Remove</button></td>
+        </tr>
+    </table>
+</section>
+
+<!-- NURSES -->
+<section id="nurses">
+    <h3>Nurses Management</h3>
+    <p>Total Nurses: <span id="nurseCount">1</span></p>
+    <div class="search-box">
+        <input type="text" id="searchNurses" placeholder="Search Nurses..."
+               onkeyup="searchTable('nursesTable','searchNurses')">
+    </div>
+    <input id="nurID" placeholder="Nurse ID">
+    <input id="nurName" placeholder="Nurse Name">
+    <input id="nurEmail" placeholder="Email">
+    <input id="nurFunction" placeholder="Function (e.g. Pediatric Nurse)">
+    <button class="add-btn"
+        onclick="addStaff('nursesTable','nurseCount','nurID','nurName','nurEmail','nurFunction','N')">
+        Add Nurse
+    </button>
+    <table id="nursesTable">
+        <tr><th>ID</th><th>Name</th><th>Email</th><th>Function</th><th>Action</th></tr>
+        <tr>
+            <td>N-001</td><td>Nurse Bob Lee</td><td>bob@hospital.com</td><td>Pediatric Nurse</td>
+            <td><button class="delete-btn" onclick="deleteRow(this,'nurseCount')">Remove</button></td>
+        </tr>
+    </table>
+</section>
+
+<!-- RECEPTIONISTS -->
+<section id="receptionists">
+    <h3>Receptionists Management</h3>
+    <p>Total Receptionists: <span id="recCount">1</span></p>
+    <div class="search-box">
+        <input type="text" id="searchReceptionists" placeholder="Search Receptionists..."
+               onkeyup="searchTable('receptionistsTable','searchReceptionists')">
+    </div>
+    <input id="recID" placeholder="Receptionist ID">
+    <input id="recName" placeholder="Receptionist Name">
+    <input id="recEmail" placeholder="Email">
+    <input id="recFunction" placeholder="Function (e.g. Front Desk)">
+    <button class="add-btn"
+        onclick="addStaff('receptionistsTable','recCount','recID','recName','recEmail','recFunction','R')">
+        Add Receptionist
+    </button>
+    <table id="receptionistsTable">
+        <tr><th>ID</th><th>Name</th><th>Email</th><th>Function</th><th>Action</th></tr>
+        <tr>
+            <td>R-001</td><td>Mary Johnson</td><td>mary@hospital.com</td><td>Front Desk</td>
+            <td><button class="delete-btn" onclick="deleteRow(this,'recCount')">Remove</button></td>
+        </tr>
+    </table>
+</section>
+
+<!-- PATIENTS -->
+<section id="patients">
+    <h3>Patients</h3>
+    <p>Total Patients: <span id="patientCount">1</span></p>
+    <div class="search-box">
+        <input type="text" id="searchPatients" placeholder="Search Patients..."
+               onkeyup="searchTable('patientsTable','searchPatients')">
+    </div>
+    <input id="patID" placeholder="Patient ID">
+    <input id="patName" placeholder="Patient Name">
+    <input id="patEmail" placeholder="Email">
+    <input id="patFunction" placeholder="Condition/Notes">
+    <button class="add-btn"
+        onclick="addStaff('patientsTable','patientCount','patID','patName','patEmail','patFunction','P')">
+        Add Patient
+    </button>
+    <table id="patientsTable">
+        <tr><th>ID</th><th>Name</th><th>Email</th><th>Function</th><th>Action</th></tr>
+        <tr>
+            <td>P-001</td><td>John Doe</td><td>john@hospital.com</td><td>General Checkup</td>
+            <td><button class="delete-btn" onclick="deleteRow(this,'patientCount')">Remove</button></td>
+        </tr>
+    </table>
+</section>
+
+</div>
+
+<script>
+function showSection(sectionId) {
+    document.querySelectorAll("section").forEach(sec => sec.style.display = "none");
+    document.getElementById(sectionId).style.display = "block";
+    updateDashboardCounts();
+}
+
+// Default view
+showSection("dashboard");
+
+// Add staff with ID + Function
+function addStaff(tableId, countId, idField, nameField, emailField, funcField, prefix) {
+    const idInput = document.getElementById(idField);
+    const nameInput = document.getElementById(nameField);
+    const emailInput = document.getElementById(emailField);
+    const funcInput = document.getElementById(funcField);
+
+    const id = idInput.value.trim();
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const func = funcInput.value.trim();
+
+    if (!id || !name || !email || !func) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    const table = document.getElementById(tableId);
+    const row = table.insertRow();
+
+    row.innerHTML = `
+        <td>${prefix}-${id}</td>
+        <td>${name}</td>
+        <td>${email}</td>
+        <td>${func}</td>
+        <td><button class="delete-btn" onclick="deleteRow(this,'${countId}')">Remove</button></td>
+    `;
+
+    idInput.value = "";
+    nameInput.value = "";
+    emailInput.value = "";
+    funcInput.value = "";
+
+    updateCount(countId, table.rows.length - 1);
+    updateDashboardCounts();
+}
+
+// Delete row and update counts
+function deleteRow(btn, countId) {
+    const table = btn.closest("table");
+    btn.parentElement.parentElement.remove();
+    updateCount(countId, table.rows.length - 1);
+    updateDashboardCounts();
+}
+
+// Update section count
+function updateCount(countId, value) {
+    document.getElementById(countId).textContent = value;
+}
+
+// Update dashboard summary counts
+function updateDashboardCounts() {
+    document.getElementById("countDoctors").textContent =
+        document.getElementById("doctorsTable").rows.length - 1;
+    document.getElementById("countNurses").textContent =
+        document.getElementById("nursesTable").rows.length - 1;
+    document.getElementById("countReceptionists").textContent =
+        document.getElementById("receptionistsTable").rows.length - 1;
+    document.getElementById("countPatients").textContent =
+        document.getElementById("patientsTable").rows.length - 1;
+
+    // Also sync section totals in case of manual edits
+    document.getElementById("doctorCount").textContent =
+        document.getElementById("doctorsTable").rows.length - 1;
+    document.getElementById("nurseCount").textContent =
+        document.getElementById("nursesTable").rows.length - 1;
+    document.getElementById("recCount").textContent =
+        document.getElementById("receptionistsTable").rows.length - 1;
+    document.getElementById("patientCount").textContent =
+        document.getElementById("patientsTable").rows.length - 1;
+}
+
+// Live search across all columns
+function searchTable(tableId, searchInputId) {
+    const input = document.getElementById(searchInputId);
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById(tableId);
+    const rows = table.getElementsByTagName("tr");
+
+    for (let i = 1; i < rows.length; i++) { // skip header
+        const cells = rows[i].getElementsByTagName("td");
+        let match = false;
+        for (let j = 0; j < cells.length - 1; j++) { // skip Action column
+            if ((cells[j].innerText || cells[j].textContent).toLowerCase().includes(filter)) {
+                match = true;
+                break;
+            }
+        }
+        rows[i].style.display = match ? "" : "none";
+    }
+}
+</script>
+
+</body>
+</html>
