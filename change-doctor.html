@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Change Doctor</title>
+    <link rel="stylesheet" href="style1.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f8ff;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+}
+
+.page-header h1 {
+    color: #0077cc;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.page-header p {
+    color: #555;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-card {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.form-group i {
+    margin-right: 6px;
+    color: #0077cc;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.btn-submit {
+    background-color: #0077cc;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.btn-submit:hover {
+    background-color: #005fa3;
+}
+
+.back-button {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.back-button a {
+    text-decoration: none;
+    color: #0077cc;
+    font-weight: bold;
+}
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Header -->
+        <header class="page-header">
+            <h1><i class="fa fa-user-doctor"></i> Change Doctor</h1>
+            <p>Update your assigned doctor with ease</p>
+        </header>
+
+        <!-- Form Card -->
+        <form class="form-card">
+
+            <div class="form-group">
+                <label><i class="fa fa-user-md"></i> Current Doctor</label>
+                <input type="text" value="Dr. John Smith" disabled>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fa fa-user-plus"></i> Select New Doctor</label>
+                <select>
+                    <option>Dr. Alice Brown (Cardiology)</option>
+                    <option>Dr. Mark Wilson (General)</option>
+                    <option>Dr. Sarah Lee (Pediatrics)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fa fa-comment-medical"></i> Reason for Change</label>
+                <textarea placeholder="Enter reason..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fa fa-paper-plane"></i> Submit Request
+            </button>
+        </form>
+
+        <!-- Back Button -->
+        <div class="back-button">
+            <a href="patient-dashboard.html"><i class="fa fa-arrow-left"></i> Back to Dashboard</a>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

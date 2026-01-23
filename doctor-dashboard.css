@@ -1,0 +1,150 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+/* Layout*/
+body {
+    display: flex;
+    background-color: #f4f6f8;
+}
+/* sidebar*/
+.sidebar {
+    width: 230px;
+    height: 100vh;
+    background-color: #1860a7;
+    color: white;
+    padding: 20px;
+}
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.sidebar ul{
+    list-style: none;
+}
+.sidebar ul li {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #263d54;
+    border-radius:  10px;
+    cursor: pointer;
+}
+.sidebar ul li:hover {
+    background-color: #1abc9c;
+}
+/* main */
+.main {
+    flex: 1;
+    padding: 30px;
+    background-color: #78aee3;
+}
+
+CSS
+
+
+
+•	{
+    Margin: 0;
+    Padding: 0;
+    Box-sizing: border-box;
+    Font-family: Arial, Helvetica, sans-serif;
+}
+
+Body {
+    Background: #f4f6f9;
+}
+
+/* Navbar */
+.navbar {
+    Background-color: #1f3a63;
+    Padding: 15px 30px;
+    Color: white;
+}
+
+.logo {
+    Font-size: 18px;
+    Font-weight: bold;
+}
+
+/* Main container */
+.container {
+    Padding: 30px;
+}
+
+H1 {
+    Margin-bottom: 20px;
+    Color: #1f3a63;
+}
+
+/* Buttons */
+.actions {
+    Display: flex;
+    Gap: 20px;
+    Margin-bottom: 30px;
+}
+
+.btn {
+    Padding: 12px 25px;
+    Border: none;
+    Border-radius: 5px;
+    Font-size: 15px;
+    Cursor: pointer;
+    Color: white;
+    Background-color: #4CAF88;
+}
+
+/* Card section */
+.card {
+    Background: #ffffff;
+    Padding: 25px;
+    Border-radius: 6px;
+    Box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.card h2 {
+    Margin-bottom: 15px;
+}
+
+/* Inputs */
+.form-row {
+    Display: flex;
+    Gap: 15px;
+    Margin-bottom: 25px;
+}
+
+Input {
+    Padding: 10px;
+    Width: 100%;
+    Border-radius: 5px;
+    Border: 1px solid #ccc;
+}
+
+/* Grid layout */
+.grid {
+    Display: grid;
+    Grid-template-columns: 1fr 1fr;
+    Gap: 20px;
+}
+
+.box {
+    Border: 1px solid #ddd;
+    Padding: 15px;
+    Border-radius: 5px;
+}
+
+.box h3 {
+    Margin-bottom: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .actions {
+        Flex-direction: column;
+    }
+
+    .grid {
+        Grid-template-columns: 1fr;
+    }
+}
