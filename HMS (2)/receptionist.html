@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Receptionist Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f5f7fa; color: #333; line-height: 1.6; padding: 20px; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 25px; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 2px solid #e0e6ef; padding-bottom: 15px; }
+    h1 { color: #2c3e50; font-size: 28px; font-weight: 700; }
+    h2 { color: #3498db; font-size: 22px; margin-bottom: 20px; font-weight: 600; }
+    .welcome-section, .section, .card { background-color: #fff; border-radius: 10px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 10px; }
+    .section-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
+    .section-title { display: flex; align-items: center; color: #2c3e50; font-size: 20px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+    .task-list { list-style-type: none; }
+    .task-item { padding: 12px 15px; margin-bottom: 10px; background-color: #f8fafc; border-radius: 8px; border-left: 4px solid #3498db; cursor: pointer; transition: all 0.2s; }
+    .task-item:hover { background-color: #edf5ff; transform: translateX(5px); }
+    .btn, .logout-btn { display: inline-flex; align-items: center; justify-content: center; background-color: #e74c3c; color: white; border: none; border-radius: 8px; padding: 12px 25px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-top: 20px; }
+    .btn:hover, .logout-btn:hover { background-color: #c0392b; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(231,76,60,0.3); }
+    .footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e6ef; color: #7f8c8d; font-size: 14px; }
+    .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
+    input, select { padding: 10px; width: 100%; border-radius: 5px; border: 1px solid #ccc; }
+    @media (max-width: 768px) { .section-container { grid-template-columns: 1fr; } header { flex-direction: column; align-items: flex-start; } h1 { margin-bottom: 15px; } .form-row { flex-direction: column; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>RECEPTIONIST DASHBOARD</h1>
+      <div class="user-info"><span>Logged in as: <strong>Receptionist</strong></span></div>
+    </header>
+
+    <div class="welcome-section">
+      <h2>Welcome</h2>
+      <p>Manage patient records, appointments, and doctor assignments from this dashboard.</p>
+    </div>
+
+    <!-- Patient Information -->
+    <section class="card">
+      <h2>Patient Information</h2>
+      <div class="form-row">
+        <input id="fullName" type="text" placeholder="Full Name">
+        <input id="age" type="number" placeholder="Age">
+      </div>
+      <div class="form-row">
+        <select id="gender">
+          <option value="">Gender</option><option>Male</option><option>Female</option><option>Other</option>
+        </select>
+        <input id="contact" type="text" placeholder="Contact Number">
+      </div>
+      <div class="form-row"><input id="address" type="text" placeholder="Address"></div>
+    </section>
+
+    <!-- Emergency Contact -->
+    <section class="card">
+      <h2>Emergency Contact</h2>
+      <div class="form-row">
+        <input id="emergencyName" type="text" placeholder="Emergency Contact Name">
+        <input id="emergencyPhone" type="text" placeholder="Emergency Contact Phone">
+      </div>
+      <div class="form-row"><input id="emergencyAddress" type="text" placeholder="Emergency Contact Address"></div>
+    </section>
+
+    <div>
+      <button class="btn" id="addPatientBtn">Add Patient</button>
+    </div>
+
+    <!-- Dashboard Sections -->
+    <div class="section-container">
+      <div class="section">
+        <div class="section-title"><span>Patients</span></div>
+        <ul class="task-list">
+          <li class="task-item">View patients</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span>Appointments</span></div>
+        <ul class="task-list">
+          <li class="task-item">View today's appointments</li>
+          <li class="task-item">View appointment details</li>
+          <li class="task-item">Add new appointment</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span>Connect Patients</span></div>
+        <ul class="task-list">
+          <li class="task-item">Search patient by name</li>
+          <li class="task-item">View doctors</li>
+          <li class="task-item">Assign patient to doctor</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Display Sections -->
+    <section class="card" id="patientsSection" style="display:none;">
+      <h2>Patients</h2>
+      <ul id="patientsList"></ul>
+    </section>
+
+    <section class="card" id="patientDetailsSection" style="display:none;">
+      <h2>Patient Details</h2>
+      <div id="patientDetails"></div>
+    </section>
+
+    <section class="card" id="appointmentsSection" style="display:none;">
+      <h2>Today's Appointments</h2>
+      <ul id="appointmentsList"></ul>
+    </section>
+
+    <section class="card" id="appointmentDetailsSection" style="display:none;">
+      <h2>Appointment Details</h2>
+      <div id="appointmentDetails"></div>
+    </section>
+
+    <section class="card" id="connectSection" style="display:none;">
+      <h2>Doctors</h2>
+      <ul id="doctorList"></ul>
+    </section>
+
+    <div style="text-align: center;">
+      <button class="logout-btn" onclick="location.href='logoutpage.html'">LOG OUT</button>
+    </div>
+
+    <div class="footer"><p>Receptionist Dashboard v1.0 | Medical Management System</p></div>
+  </div>
+
+  <script>
+    let patients = [];
+let appointments = [
+  { time: "09:00 AM", patient: "John Doe", doctor: "Dr. Smith", reason: "General Checkup" },
+  { time: "10:30 AM", patient: "Jane Roe", doctor: "Dr. Adams", reason: "Follow-up Consultation" },
+  { time: "01:00 PM", patient: "Michael Lee", doctor: "Dr. Brown", reason: "Dental Cleaning" }
+];
+
+let doctors = [
+  { name: "Dr. Smith", specialty: "General Medicine" },
+  { name: "Dr. Adams", specialty: "Cardiology" },
+  { name: "Dr. Brown", specialty: "Dentistry" }
+];
+
+// Add Patient button functionality with automatic ID
+document.getElementById('addPatientBtn').addEventListener('click', function() {
+  const patient = {
+    id: "P" + String(patients.length + 1).padStart(3, "0"),
+    fullName: document.getElementById('fullName').value,
+    age: document.getElementById('age').value,
+    gender: document.getElementById('gender').value,
+    contact: document.getElementById('contact').value,
+    address: document.getElementById('address').value,
+    emergencyName: document.getElementById('emergencyName').value,
+    emergencyPhone: document.getElementById('emergencyPhone').value,
+    emergencyAddress: document.getElementById('emergencyAddress').value
+  };
+
+  if (!patient.fullName || !patient.age || !patient.gender) {
+    alert("Please fill in all required fields (Name, Age, Gender).");
+    return;
+  }
+
+  patients.push(patient);
+  alert(`Patient ${patient.fullName} added successfully with ID ${patient.id}!`);
+
+  // Clear form
+  document.getElementById('fullName').value = "";
+  document.getElementById('age').value = "";
+  document.getElementById('gender').value = "";
+  document.getElementById('contact').value = "";
+  document.getElementById('address').value = "";
+  document.getElementById('emergencyName').value = "";
+  document.getElementById('emergencyPhone').value = "";
+  document.getElementById('emergencyAddress').value = "";
+});
+
+// Handle task item clicks
+document.querySelectorAll('.task-item').forEach(item => {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.task-item').forEach(i => {
+      i.style.backgroundColor = '#f8fafc';
+    });
+    this.style.backgroundColor = '#e3f2fd';
+    const taskText = this.textContent.trim();
+
+    // View Patients
+    if (taskText === "View patients") {
+      const section = document.getElementById('patientsSection');
+      const list = document.getElementById('patientsList');
+      list.innerHTML = "";
+      patients.forEach((p, index) => {
+        const li = document.createElement('li');
+        li.textContent = `${p.id} - ${p.fullName} (${p.age}, ${p.gender})`;
+        li.style.cursor = "pointer";
+        li.addEventListener('click', () => showPatientDetails(index));
+        list.appendChild(li);
+      });
+      section.style.display = "block";
+      document.getElementById('patientDetailsSection').style.display = "none";
+    }
+
+    // Appointments
+    if (taskText === "View today's appointments") {
+      const section = document.getElementById('appointmentsSection');
+      const list = document.getElementById('appointmentsList');
+      list.innerHTML = "";
+      appointments.forEach((app, index) => {
+        const li = document.createElement('li');
+        li.textContent = `${app.time} - ${app.patient} with ${app.doctor}`;
+        li.style.cursor = "pointer";
+        li.addEventListener('click', () => showAppointmentDetails(index));
+        list.appendChild(li);
+      });
+      section.style.display = "block";
+      document.getElementById('appointmentDetailsSection').style.display = "none";
+    }
+
+    if (taskText === "View appointment details") {
+      alert("Click on an appointment from the list to view its details.");
+    }
+
+    if (taskText === "Add new appointment") {
+      const time = prompt("Enter appointment time (e.g., 02:00 PM):");
+      const patient = prompt("Enter patient name:");
+      const doctor = prompt("Enter doctor name:");
+      const reason = prompt("Enter reason for appointment:");
+      if (time && patient && doctor) {
+        appointments.push({ time, patient, doctor, reason });
+        alert("Appointment added successfully!");
+      } else {
+        alert("Appointment not added. Please fill all required fields.");
+      }
+    }
+
+    // Connect Patients
+    if (taskText === "Search patient by name") {
+      const searchName = prompt("Enter patient name to search:");
+      if (searchName) {
+        const found = patients.find(p => p.fullName.toLowerCase() === searchName.toLowerCase());
+        if (found) {
+          alert(`Found patient: ${found.fullName} (ID: ${found.id})`);
+          showPatientDetails(patients.indexOf(found));
+        } else {
+          alert("Patient not found.");
+        }
+      }
+    }
+
+    if (taskText === "View doctors") {
+      const section = document.getElementById('connectSection');
+      const list = document.getElementById('doctorList');
+      list.innerHTML = "";
+      doctors.forEach(d => {
+        const li = document.createElement('li');
+        li.textContent = `${d.name} - ${d.specialty}`;
+        list.appendChild(li);
+      });
+      section.style.display = "block";
+    }
+
+    if (taskText === "Assign patient to doctor") {
+      const patientName = prompt("Enter patient name:");
+      const doctorName = prompt("Enter doctor name:");
+      const patient = patients.find(p => p.fullName.toLowerCase() === patientName.toLowerCase());
+      const doctor = doctors.find(d => d.name.toLowerCase() === doctorName.toLowerCase());
+      if (patient && doctor) {
+        alert(`Assigned ${patient.fullName} (ID: ${patient.id}) to ${doctor.name} successfully!`);
+      } else {
+        alert("Patient or doctor not found.");
+      }
+    }
+  });
+});
+
+// Show patient details
+function showPatientDetails(index) {
+  const p = patients[index];
+  const detailsSection = document.getElementById('patientDetailsSection');
+  const detailsDiv = document.getElementById('patientDetails');
+  detailsDiv.innerHTML = `
+    <p><strong>ID:</strong> ${p.id}</p>
+    <p><strong>Name:</strong> ${p.fullName}</p>
+    <p><strong>Age:</strong> ${p.age}</p>
+    <p><strong>Gender:</strong> ${p.gender}</p>
+    <p><strong>Contact:</strong> ${p.contact}</p>
+    <p><strong>Address:</strong> ${p.address}</p>
+    <p><strong>Emergency Contact:</strong> ${p.emergencyName} (${p.emergencyPhone})</p>
+    <p><strong>Emergency Address:</strong> ${p.emergencyAddress}</p>
+  `;
+  detailsSection.style.display = "block";
+}
+
+// Show appointment details
+function showAppointmentDetails(index) {
+  const app = appointments[index];
+  const detailsSection = document.getElementById('appointmentDetailsSection');
+  const detailsDiv = document.getElementById('appointmentDetails');
+  detailsDiv.innerHTML = `
+    <p><strong>Time:</strong> ${app.time}</p>
+    <p><strong>Patient:</strong> ${app.patient}</p>
+    <p><strong>Doctor:</strong> ${app.doctor}</p>
+    <p><strong>Reason:</strong> ${app.reason || "N/A"}</p>
+  `;
+  detailsSection.style.display = "block";
+}
+
+// Logout button functionality
+document.querySelector('.logout-btn').addEventListener('click', function() {
+  if (confirm('Are you sure you want to log out?')) {
+    alert('Logging out...');
+  }
+});
+</script>
+</body>
+</html>

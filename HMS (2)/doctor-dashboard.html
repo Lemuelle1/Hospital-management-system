@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Doctor Dashboard</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    display: flex;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 280px;
+    background: #2a5c9e;
+    color: white;
+    height: 100vh;
+    padding-top: 20px;
+    font-size: 20px;
+}
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.sidebar button {
+    width: 100%;
+    padding: 15px;
+    background: none;
+    border: none;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    font-size: 18px;
+}
+.sidebar button:hover { background: #34495e; }
+.sidebar button:active { background: #34495e; }
+.logout-btn {
+   background-color: #f8fbff;
+    color: #2a5c9e;
+    border: 2px solid #2a5c9e;
+    font-weight: bold;
+    text-align: center;
+}
+.logout-btn:hover {
+    background:  #2a5c9e;
+    color: #f8fbff;
+    border: 2px solid #f8fbff;
+}
+
+
+/* MAIN */
+.main {
+    flex: 1;
+    padding: 20px;
+}
+
+section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    display: none;
+}
+
+h3 {
+    color: #3498db;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+th {
+    background: #ecf0f1;
+}
+
+/* INPUTS */
+input, select, button {
+    padding: 8px;
+    margin: 5px 0;
+    width: 100%;
+}
+
+.action-btn {
+    background: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.success {
+    color: green;
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>Doctor Dashboard</h2>
+    <button onclick="showSection('appointments')">View Appointments</button>
+    <button onclick="showSection('patients')">View Patients</button>
+    <button onclick="showSection('reschedule')">Reschedule Appointment</button>
+    <button onclick="showSection('records')">Send Medical Records</button>
+    <button onclick="showSection('update')">Update Patient Info</button>
+    <hr style="margin:20px 0; border:1px solid #fff; opacity:0.3;">
+    <button class="logout-btn" onclick="location.href='logoutpage.html'"> Logout</button>
+
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+<!-- VIEW APPOINTMENTS -->
+<section id="appointments">
+    <h3>Appointments</h3>
+    <table>
+        <tr>
+            <th>Patient Name</th>
+            <th>Gender</th>
+            <th>Date</th>
+            <th>Time</th>
+        </tr>
+        <tr>
+            <td>John Doe</td>
+            <td>Male</td>
+            <td>2025-01-05</td>
+            <td>10:00 AM</td>
+        </tr>
+        <tr>
+            <td>Mary Jane</td>
+            <td>Female</td>
+            <td>2025-01-06</td>
+            <td>02:00 PM</td>
+        </tr>
+    </table>
+</section>
+
+<!-- VIEW PATIENTS -->
+<section id="patients">
+    <h3>Patients Under This Doctor</h3>
+    <p>Total Patients: <b id="patientCount">2</b></p>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>Age</th>
+        </tr>
+        <tr>
+            <td>John Doe</td>
+            <td>Male</td>
+            <td>30</td>
+        </tr>
+        <tr>
+            <td>Mary Jane</td>
+            <td>Female</td>
+            <td>25</td>
+        </tr>
+    </table>
+</section>
+
+<!-- RESCHEDULE -->
+<section id="reschedule">
+    <h3>Reschedule Appointment</h3>
+
+    <select id="appointmentPatient">
+        <option>John Doe</option>
+        <option>Mary Jane</option>
+    </select>
+
+    <input type="date" id="newDate">
+    <input type="time" id="newTime">
+
+    <button class="action-btn" onclick="reschedule()">Reschedule</button>
+    <p class="success" id="rescheduleMsg"></p>
+</section>
+
+<!-- SEND MEDICAL RECORD -->
+<section id="records">
+    <h3>Send Medical Record</h3>
+
+    <select id="recordPatient">
+        <option>John Doe</option>
+        <option>Mary Jane</option>
+    </select>
+
+    <input placeholder="Medical Record / Diagnosis">
+
+    <button class="action-btn" onclick="sendRecord()">Send</button>
+    <p class="success" id="recordMsg"></p>
+</section>
+
+<!-- UPDATE PATIENT INFO -->
+<section id="update">
+    <h3>Update Patient Information</h3>
+
+    <select id="updatePatient">
+        <option>John Doe</option>
+        <option>Mary Jane</option>
+    </select>
+
+    <input type="number" placeholder="Age">
+    <input placeholder="Medical History">
+
+    <button class="action-btn" onclick="updateInfo()">Update</button>
+    <p class="success" id="updateMsg"></p>
+</section>
+
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+function showSection(id) {
+    document.querySelectorAll("section").forEach(s => s.style.display = "none");
+    document.getElementById(id).style.display = "block";
+}
+
+// default view
+showSection("appointments");
+
+// Reschedule appointment
+function reschedule() {
+    const patient = document.getElementById("appointmentPatient").value;
+    const newDate = document.getElementById("newDate").value;
+    const newTime = document.getElementById("newTime").value;
+
+    if (!newDate || !newTime) {
+        document.getElementById("rescheduleMsg").textContent =
+            "Please select both date and time.";
+        return;
+    }
+
+    // Find the row in the appointments table
+    const rows = document.querySelectorAll("#appointments table tr");
+    rows.forEach((row, index) => {
+        if (index === 0) return; // skip header row
+        const nameCell = row.cells[0];
+        if (nameCell.textContent === patient) {
+            row.cells[2].textContent = newDate; // update date
+            row.cells[3].textContent = formatTime(newTime); // update time
+        }
+    });
+
+    document.getElementById("rescheduleMsg").textContent =
+        "Appointment rescheduled successfully!";
+}
+
+// Helper function to format time nicely
+function formatTime(timeStr) {
+    let [hour, minute] = timeStr.split(":");
+    hour = parseInt(hour);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12 || 12;
+    return `${hour}:${minute} ${ampm}`;
+}
+
+// Send medical record
+function sendRecord() {
+    document.getElementById("recordMsg").textContent =
+        "Medical record sent successfully!";
+}
+
+// Update patient info
+function updateInfo() {
+    const patient = document.getElementById("updatePatient").value;
+    const newAge = document.querySelector("#update input[type='number']").value;
+    const newHistory = document.querySelector("#update input[placeholder='Medical History']").value;
+
+    // Find the row in the patients table
+    const rows = document.querySelectorAll("#patients table tr");
+    rows.forEach((row, index) => {
+        if (index === 0) return; // skip header row
+        const nameCell = row.cells[0];
+        if (nameCell.textContent === patient) {
+            if (newAge) row.cells[2].textContent = newAge; // update age
+            // Optionally add medical history column if needed
+        }
+    });
+
+    document.getElementById("updateMsg").textContent =
+        "Patient information updated successfully!";
+}
+
+</script>
+
+</body>
+</html>

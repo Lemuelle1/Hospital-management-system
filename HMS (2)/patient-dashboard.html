@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Patient Dashboard</title>
+    <link rel="stylesheet" href="style1.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header>
+        <h1>PATIENT DASHBOARD</h1>
+    </header>
+
+    <div class="container">
+
+        <!-- PROFILE -->
+        <div class="profile">
+            <img src="avatar.png" alt="User Avatar" class="avatar">
+            <h2>Welcome</h2>
+        </div>
+
+        <!-- NAVIGATION -->
+        <nav class="nav">
+            <a href="#"><i class="fa fa-home"></i> Dashboard</a>
+            <a href="#"><i class="fa fa-user-doctor"></i> Change Doctor</a>
+            <a href="#"><i class="fa fa-calendar-check"></i> Appointments</a>
+            <a href="#"><i class="fa fa-right-from-bracket"></i> Logout</a>
+        </nav>
+
+        <!-- CARDS -->
+        <div class="cards">
+
+            <!-- Change Doctor -->
+           
+                <div class="card">
+                     <a href="change-doctor.html" class="card-link">
+                    <h3><i class="fa fa-user-doctor"></i> Change Doctor</h3>
+                    </a>
+                    <ul>
+                        <li>Select a new doctor</li>
+                        <li>Change assigned doctor</li>
+                    </ul>
+                </div>
+            
+
+            <!-- Download Record -->
+            
+                <div class="card">
+                    <a href="downloadRecord.html" class="card-link">
+                    <h3><i class="fa fa-download"></i> Download Record</h3>
+                    </a>
+                    <ul>
+                        <li>View my status</li>
+                        <li>Download my record</li>
+                    </ul>
+                </div>
+            
+
+            <!-- View Appointments -->
+            
+                <div class="card">
+                    <a href="appointments.html" class="card-link">
+                    <h3><i class="fa fa-calendar"></i> View Appointments</h3>
+                    </a>
+                    <ul>
+                        <li>View upcoming appointments</li>
+                        <li>Past appointment history</li>
+                    </ul>
+                </div>
+           
+
+            <!-- View Prescriptions -->
+            
+                <div class="card">
+                    <a href="prescriptions.html" class="card-link">
+                    <h3><i class="fa fa-file-prescription"></i> View Prescriptions</h3>
+                    </a>
+                    <ul>
+                        <li>See current prescriptions</li>
+                        <li>Prescription history</li>
+                    </ul>
+                </div>
+            
+
+        </div>
+
+        <!-- LOGOUT -->
+        <div class="logout">
+            <button onclick="location.href='logoutpage.html'">LOG OUT</button>
+        </div>
+
+    </div>
+</body>
+
+</html>

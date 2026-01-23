@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HMS Login Page</title>
+  <link rel="stylesheet" href="staff-login.css">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="wrapper">
+    <h1>Staff Login</h1>
+    <!-- Single form, no duplicates -->
+    <form id="loginForm" method="POST" action="/login">
+      
+      <!-- Role selection -->
+      <div class="input-box">
+        <label for="role">Role</label>
+        <select id="role" name="role" required>
+          <option value="admin">Admin</option>
+          <option value="doctor">Doctor</option>
+          <option value="nurse">Nurse</option>
+          <option value="receptionist">Receptionist</option>
+        </select>
+      </div>
+
+      <!-- Email -->
+      <div class="input-box">
+        <label for="email"><i class="bx bx-envelope"></i> Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter email" required>
+      </div>
+
+      <!-- Username -->
+      <div class="input-box">
+        <label for="username"><i class="bx bxs-user"></i> Username</label>
+        <input type="text" id="username" name="username" placeholder="Enter username" required>
+      </div>
+
+      <!-- Password -->
+      <div class="input-box password-wrapper">
+        <label for="password"><i class="bx bx-lock"></i> Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter password" required >
+        <i class="bx bx-hide" id="togglePassword"></i>
+      </div>
+
+      <!-- Remember me / Forgot password -->
+      <div class="remember-forgot">
+        <label><input type="checkbox" name="remember"> Remember me</label>
+        <a href="#">Forgot Password?</a>
+      </div>
+
+      <!-- Buttons -->
+      <button type="submit" class="btn" onclick="login()">Login</button>
+      <p id="errorMessage" class="error-message"></p>
+      <button type="button" class="btn-back" onclick="history.back()">Go Back</button>
+      <button type="button" class="btn-cancel" onclick="clearForm()">Cancel</button>
+    </form>
+  </div>
+
+  <script>
+    function login() {
+    const role = document.getElementById("role").value;
+
+    // Redirect based on role
+    if (role === "doctor") {
+        window.location.href = "doctor-dashboard.html";
+    } else if (role === "admin") {
+        window.location.href = "admin-dashboard.html";
+    } else if (role === "nurse") {
+        window.location.href = "nurse.html";
+    } else if (role === "receptionist") {
+        window.location.href = "receptionist.html";
+    }
+}
+
+    // Toggle password visibility
+    const togglePassword = document.querySelector("#togglePassword");
+    const password = document.querySelector("#password");
+
+    togglePassword.addEventListener("click", () => {
+      const type = password.getAttribute("type") === "password" ? "text" : "password";
+      password.setAttribute("type", type);
+      togglePassword.classList.toggle("bx-show");
+    });
+
+     function clearForm() {
+      document.getElementById("loginForm").reset();
+      document.getElementById("errorMessage").style.display = "none"; // hide error if shown
+    }
+
+    const loginForm = document.getElementById("loginForm");
+   if (loginForm) {
+       loginForm.addEventListener("submit", function (e) {
+           e.preventDefault();
+        // login logic
+         document.getElementById("loginForm").addEventListener("submit", function(e) {
+      const email = document.getElementById("email").value;
+      const passwordVal = document.getElementById("password").value;
+
+      if (!email.includes("@")) {
+        e.preventDefault();
+        document.getElementById("errorMessage").textContent = "Please enter a valid email.";
+        document.getElementById("errorMessage").style.display = "block";
+      } else if (passwordVal.length < 6) {
+        e.preventDefault();
+        document.getElementById("errorMessage").textContent = "Password must be at least 6 characters.";
+        document.getElementById("errorMessage").style.display = "block";
+      }
+    });
+        });
+}
+
+
+    // Basic front-end validation
+   
+  </script>
+</body>
+</html>

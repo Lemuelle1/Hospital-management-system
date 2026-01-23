@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nurse Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f0f7ff;
+      color: #333;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .dashboard-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 150, 0.1);
+      overflow: hidden;
+    }
+
+    .header {
+      background-color: #2a5c9e;
+      color: white;
+      padding: 25px 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+
+    .header p {
+      font-size: 18px;
+      opacity: 0.9;
+    }
+
+    .separator {
+      height: 4px;
+      background-color: #e0e0e0;
+      margin: 0 20px;
+    }
+
+    .menu-section {
+      padding: 30px;
+    }
+
+    .menu-item {
+      background-color: #f8fbff;
+      border-left: 5px solid #2a5c9e;
+      margin-bottom: 20px;
+      padding: 20px;
+      border-radius: 0 8px 8px 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+
+    .menu-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .menu-item h3 {
+      color: #2a5c9e;
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    .menu-item p {
+      color: #666;
+      font-size: 16px;
+    }
+
+    .menu-icon {
+      background-color: #e8f1ff;
+      color: #2a5c9e;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+      font-size: 22px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 25px;
+      border-top: 1px solid #eee;
+    }
+
+    .logout-btn {
+      background-color: #f8fbff;
+      color: #2a5c9e;
+      border: 2px solid #2a5c9e;
+      padding: 12px 30px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .logout-btn:hover {
+      background-color: #2a5c9e;
+      color: white;
+    }
+
+    .form-container {
+      background-color: #f8fbff;
+      border: 2px solid #2a5c9e;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .form-container h2 {
+      color: #2a5c9e;
+      margin-bottom: 15px;
+    }
+
+    .form-container label {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .form-container input, .form-container select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .form-container button {
+      background-color: #2a5c9e;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .form-container button:hover {
+      background-color: #1d4170;
+    }
+
+    @media (max-width: 600px) {
+      .dashboard-container {
+        margin: 10px;
+        border-radius: 8px;
+      }
+
+      .header {
+        padding: 20px;
+      }
+
+      .menu-section {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <div class="header">
+      <h1>Nurse Dashboard</h1>
+      <p>Welcome, Nurse</p>
+    </div>
+
+    <div class="separator"></div>
+
+    <div class="menu-section">
+      <div class="menu-item" id="assigned-patients">
+        <div class="menu-icon"><i class="fas fa-user-injured"></i></div>
+        <h3>Assigned Patients</h3>
+        <p>View patients under your care</p>
+      </div>
+
+      <div class="menu-item" id="update-vitals">
+        <div class="menu-icon"><i class="fas fa-heartbeat"></i></div>
+        <h3>Update Vitals</h3>
+        <p>Record temperature, BP, pulse</p>
+      </div>
+
+      <div class="menu-item" id="view-reports">
+        <div class="menu-icon"><i class="fas fa-file-medical-alt"></i></div>
+        <h3>View Reports</h3>
+        <p>Check patient medical reports</p>
+      </div>
+    </div>
+
+    <!-- Patient Selection -->
+    <div id="patient-selection" class="form-container" style="display:none;">
+      <h2>Select Patient</h2>
+      <select id="patientDropdown">
+        <option value="">-- Choose Patient --</option>
+        <option value="John Doe">John Doe</option>
+        <option value="Jane Smith">Jane Smith</option>
+        <option value="Michael Brown">Michael Brown</option>
+      </select>
+      <button id="confirmPatient">Confirm</button>
+    </div>
+
+    <!-- Vitals Form -->
+    <div id="vitals-form" class="form-container" style="display:none;">
+      <h2>Update Vitals for <span id="selectedPatientVitals"></span></h2>
+      <form id="vitalsForm">
+        <label>Temperature (°C):</label>
+        <input type="number" step="0.1" name="temperature" required>
+
+        <label>Height (cm):</label>
+        <input type="number" name="height" required>
+
+        <label>Blood Pressure (mmHg):</label>
+        <input type="text" name="bp" placeholder="120/80" required>
+
+        <label>Pulse (bpm):</label>
+        <input type="number" name="pulse" required>
+
+        <button type="submit">Save Vitals</button>
+      </form>
+    </div>
+
+    <!-- Reports Section -->
+    <div id="reports-section" class="form-container" style="display:none;">
+      <h2>Reports for <span id="selectedPatientReports"></span></h2>
+      <p>📄 Medical history and lab results will be displayed here (read-only).</p>
+    </div>
+
+     <div class="footer">
+            <button class="logout-btn" onclick="location.href='logoutpage.html'">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+  </div>
+<script>
+  let selectedPatient = "";
+
+  // Assigned Patients → show dropdown
+  document.getElementById('assigned-patients').addEventListener('click', () => {
+    document.getElementById('patient-selection').style.display = 'block';
+    document.getElementById('vitals-form').style.display = 'none';
+    document.getElementById('reports-section').style.display = 'none';
+  });
+
+  // Confirm patient selection
+  document.getElementById('confirmPatient').addEventListener('click', () => {
+    const patient = document.getElementById('patientDropdown').value;
+    if (patient) {
+      selectedPatient = patient;
+      alert(`Patient selected: ${patient}`);
+      document.getElementById('patient-selection').style.display = 'none';
+    } else {
+      alert("Please select a patient first.");
+    }
+  });
+
+  // Update Vitals → only if patient selected
+  document.getElementById('update-vitals').addEventListener('click', () => {
+    if (!selectedPatient) {
+      alert("Please select a patient first (Assigned Patients).");
+      return;
+    }
+    document.getElementById('selectedPatientVitals').textContent = selectedPatient;
+    document.getElementById('vitals-form').style.display = 'block';
+    document.getElementById('reports-section').style.display = 'none';
+  });
+
+  // Handle vitals form submission
+  document.getElementById('vitalsForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    let output = `Vitals for ${selectedPatient}:\n`;
+    for (let [key, value] of formData.entries()) {
+      output += `${key}: ${value}\n`;
+    }
+    alert(output);
+
+    // Reset and hide form
+    this.reset();
+    document.getElementById('vitals-form').style.display = 'none';
+  });
+
+  // View Reports → only if patient selected
+  document.getElementById('view-reports').addEventListener('click', () => {
+    if (!selectedPatient) {
+      alert("Please select a patient first (Assigned Patients).");
+      return;
+    }
+    document.getElementById('selectedPatientReports').textContent = selectedPatient;
+    document.getElementById('reports-section').style.display = 'block';
+    document.getElementById('vitals-form').style.display = 'none';
+  });
+
+  // Logout button functionality
+  document.querySelector('.logout-btn').addEventListener('click', function() {
+    if (confirm('Are you sure you want to logout?')) {
+      alert('Logging out...');
+      // In a real application, redirect to login page
+      // window.location.href = 'login.html';
+    }
+  });
+</script>
+</body>
+</html>
